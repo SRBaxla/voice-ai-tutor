@@ -1,29 +1,22 @@
-from fastapi import FastAPI
-from backend.graph import GraphHelper
-from backend.ai_engine import TutorAI
-from backend.stt import transcribe_audio
-from backend.tts import synthesize_speech
+from backend.voice import record_audio
+from backend.transcribe import transcribe_audio
+from backend.llm import query_llm
+from backend.loop import main_loop
+from backend.selftest import run_self_test
 
-app = FastAPI()
+def main():
+    print("Recording audio...")
+    audio = record_audio()
+    print("Transcribing audio...")
+    text = transcribe_audio(audio)
+    print(f"You said: {text}")
+    print("Querying LLM...")
+    response = query_llm(text)
+    print(f"LLM response: {response}")
 
-graph_helper = GraphHelper()
-tutor_ai = TutorAI()
-
-@app.post("/ask")
-async def ask(user_id: str, audio: bytes = None, text: str = None):
-    # If audio, transcribe
-    if audio:
-        text = transcribe_audio(audio)
-    # Get AI response
-    response = tutor_ai.get_response(user_id, text)
-    return {"response": response}
-
-@app.post("/remember")
-async def remember(user_id: str, concept: str, context: str = None):
-    graph_helper.remember_concept(user_id, concept, context)
-    return {"status": "Concept remembered."}
-
-@app.get("/recall")
-async def recall(user_id: str):
-    nodes = graph_helper.recall_concepts(user_id)
-    return {"nodes": nodes}
+if __name__ == "__main__":
+    if not run_self_test():
+        print("[Startup] Self-test failed. Exiting.")
+        exit(1)
+    main_loop()
+    main()

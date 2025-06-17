@@ -4,6 +4,17 @@ A private, locally hosted AI tutor that learns from you. Uses voice, local model
 
 ---
 
+# Local Voice-Based AI Assistant
+
+This project captures voice from your microphone, transcribes it with Whisper, and sends the text to a local Mistral 7B model for intelligent responses—all running in Docker locally.
+
+## How It Works
+1. User speaks → Microphone records
+2. Whisper (faster-whisper) transcribes speech to text
+3. Local LLM (Mistral 7B, Ollama, LM Studio, etc.) receives prompt and responds
+
+---
+
 ## 🚀 Project Overview
 
 **Local Voice AI Tutor** is your private Jarvis.
@@ -35,7 +46,7 @@ Perfect for self-learners, researchers, and anyone who wants a **personal tutor 
 ```
 voice-ai-tutor/
 ├── backend/
-│   ├── main.py           # FastAPI API server
+│   ├── main.py           # FastAPI API server / CLI
 │   ├── vector_store.py   # Local RAG index (e.g. ChromaDB)
 │   ├── graph_memory.py   # Knowledge graph logic (Neo4j, RDF, etc.)
 │   ├── ai_core.py        # Local LLM + prompt logic
@@ -60,8 +71,10 @@ git clone https://github.com/yourname/voice-ai-tutor.git
 cd voice-ai-tutor
 cp .env.example .env
 
-# Then start everything
-docker-compose up --build
+docker build -t voice-assistant .
+docker run --rm -it --device /dev/snd voice-assistant
+# Or start everything
+# docker-compose up --build
 ```
 
 > **Note**: Make sure you have Ollama or a compatible LLM running locally in the container (e.g., `llama3`, `mistral`, or `phi`).
@@ -102,10 +115,12 @@ NEO4J_PASSWORD=password
 
 ## 🛠️ Requirements
 
-* Docker & Docker Compose
-* Python 3.10+
-* [Whisper](https://github.com/openai/whisper) (local)
-* Optional: Ollama or LM Studio for local LLM
+- Python 3.10
+- Docker
+- Microphone access
+- Locally running LLM (Ollama, LM Studio, etc.)
+- [Whisper](https://github.com/openai/whisper) (local)
+- Optional: Ollama or LM Studio for local LLM
 
 ---
 

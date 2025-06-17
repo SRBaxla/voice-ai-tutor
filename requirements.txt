@@ -3,3 +3,7 @@ uvicorn
 neo4j
 openai
 python-multipart
+faster-whisper
+sounddevice
+scipy
+requests
